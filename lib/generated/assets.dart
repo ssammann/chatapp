@@ -13,6 +13,7 @@ class Assets {
   static const String libMain = 'lib/main.dart';
   static const String pagesHomeScreen = 'lib/pages/HomeScreen.dart';
   static const String servicesAuthService = 'lib/services/AuthService.dart';
+  static const String servicesDatabaseSevice = 'lib/services/DatabaseSevice.dart';
   static const String stylesColors = 'lib/styles/Colors.dart';
   static const String stylesTextStyles = 'lib/styles/TextStyles.dart';
 
