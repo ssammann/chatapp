@@ -16,5 +16,6 @@ class Assets {
   static const String servicesDatabaseSevice = 'lib/services/DatabaseSevice.dart';
   static const String stylesColors = 'lib/styles/Colors.dart';
   static const String stylesTextStyles = 'lib/styles/TextStyles.dart';
+  static const String widgetsInfoCard = 'lib/widgets/InfoCard.dart';
 
 }

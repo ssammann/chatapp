@@ -16,7 +16,16 @@ class DatabaseService {
       "fullName": fName,
       "email": email,
       "groups":[],
-      "profilePic":""
+      "profilePic":"",
+      "uid" : uid
     });
   }
+
+
+  getUserData() async{
+    QuerySnapshot snapshot= await userCR.where("uid" , isEqualTo: uid).get();
+    return snapshot;
+  }
 }
+
+

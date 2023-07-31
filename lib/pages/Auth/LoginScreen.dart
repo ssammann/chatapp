@@ -1,6 +1,13 @@
 import 'package:avoid_keyboard/avoid_keyboard.dart';
+import 'package:chatapp/helper/helperFunc.dart';
 import 'package:chatapp/pages/Auth/SignupScreen.dart';
+import 'package:chatapp/pages/HomeScreen.dart';
+import 'package:chatapp/services/AuthService.dart';
+import 'package:chatapp/services/DatabaseSevice.dart';
 import 'package:chatapp/styles/TextStyles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:localization/localization.dart';
 
@@ -14,6 +21,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late FocusNode emailNode;
   late FocusNode passwordNode;
+  String email = "";
+  String password = "";
 
   @override
   void initState() {
@@ -21,6 +30,23 @@ class _LoginScreenState extends State<LoginScreen> {
     emailNode = FocusNode();
     passwordNode = FocusNode();
     super.initState();
+  }
+
+  login() async {
+    await AuthService().login( email, password).then((value) async {
+      if (value == true) {
+        QuerySnapshot snapshot =
+            await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+                .getUserData();
+        HelperFunctions.saveUserLoginState(true);
+        HelperFunctions.saveUserEmail(email);
+        HelperFunctions.saveUserName(snapshot.docs[0]['fullName']);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      } else {
+        print(value);
+      }
+    });
   }
 
   @override
@@ -68,6 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   onFieldSubmitted: (v) {
                     FocusScope.of(context).requestFocus(passwordNode);
                   },
+                  onChanged: (v) {
+                    email = v;
+                  },
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Email',
@@ -80,6 +109,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   focusNode: passwordNode,
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.done,
+                  obscureText: true,
+                  onChanged: (v) {
+                    password = v;
+                  },
+                  onFieldSubmitted: (v){
+                     login();
+                  },
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Password',
@@ -97,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
+                        onTap: () { login();},
                         child: Text(
                           "Sign in",
                           style: TextStyle(fontSize: 20),
@@ -104,9 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-
-                      },
+                      onTap: () { login();},
                       child: Container(
                           width: 60,
                           height: 60,
@@ -126,8 +161,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap:(){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SignUpScreen()));
                       },
                       child: Container(child: Text("Sign up")),
                     ),
